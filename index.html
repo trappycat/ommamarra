@@ -14,6 +14,7 @@
 
     #image {
         position: absolute;
+        transition-duration: 0.5s;
     }
 
     #attackButton {
@@ -44,28 +45,19 @@
     </style>
 </head>
 <body>
-    <?php
-        $imageSrc = "img.png";
-        $imageWidth = 100; // adjust the width of the image
-        $imageHeight = 100; // adjust the height of the image
-
-        $upgradePoints = 0; // Initialize upgrade points
-
-        echo "<img id='image' src='$imageSrc' width='$imageWidth' height='$imageHeight' alt='Bouncing Image'>";
-    ?>
-
+    <img id="image" src="img.png" alt="Bouncing Image">
     <button id="attackButton">Attack!</button>
-    <div id="upgradePoints">Upgrade Points: <?php echo $upgradePoints; ?></div>
+    <div id="upgradePoints">Upgrade Points: 0</div>
 
     <script>
         var image = document.getElementById('image');
         var attackButton = document.getElementById('attackButton');
-        var upgradePoints = <?php echo $upgradePoints; ?>;
-        var imageWidth = <?php echo $imageWidth; ?>;
-        var imageHeight = <?php echo $imageHeight; ?>;
+        var upgradePoints = 0;
+        var imageWidth = 100;
+        var imageHeight = 100;
         var screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
         var screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-
+        
         var posX = Math.random() * (screenWidth - imageWidth);
         var posY = Math.random() * (screenHeight - imageHeight);
         var velX = Math.random() < 0.5 ? 5 : -5; // Random initial direction
@@ -89,40 +81,34 @@
             if (posY <= 0 || posY >= screenHeight - imageHeight) {
                 velY *= -1;
             }
-
-            if (isAttacking) {
-                image.style.backgroundColor = 'red';
-                setTimeout(function() {
-                    image.style.backgroundColor = '';
-                    isAttacking = false;
-                }, 500);
-            }
-
+            
             image.style.left = posX + 'px';
             image.style.top = posY + 'px';
 
             requestAnimationFrame(updatePosition);
         }
 
-        image.addEventListener('click', function() {
-            if (upgradePoints > 0) {
-                upgradePoints--;
-                displayUpgradePoints();
+        function attackImage() {
+            if (!isAttacking && upgradePoints > 0) {
                 isAttacking = true;
-            }
-        });
+                upgradePoints--;
 
-        attackButton.addEventListener('click', function() {
-            if (upgradePoints > 0) {
-                upgradePoints--;
+                image.style.backgroundColor = 'red';
+                setTimeout(function() {
+                    image.style.backgroundColor = '';
+                    isAttacking = false;
+                }, 500);
+                
                 displayUpgradePoints();
-                isAttacking = true;
             }
-        });
+        }
 
         function displayUpgradePoints() {
             document.getElementById('upgradePoints').innerHTML = 'Upgrade Points: ' + upgradePoints;
         }
+
+        image.addEventListener('click', attackImage);
+        attackButton.addEventListener('click', attackImage);
 
         displayUpgradePoints();
         updatePosition();
