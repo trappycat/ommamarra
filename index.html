@@ -1,194 +1,117 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bouncing Image RPG</title>
-  <style>
+    <title>Bouncing Image RPG</title>
+    <style>
     body {
-      margin: 0;
-      padding: 0;
-      background-image: url("gradient.gif");
-      background-repeat: no-repeat;
-      background-size: cover;
-      font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-image: url("gradient.gif");
+        background-repeat: no-repeat;
+        background-size: cover;
+        font-family: Arial, sans-serif;
     }
 
     #image {
-      position: absolute;
-      transition-duration: 0.5s;
+        position: absolute;
+        transition-duration: 0.5s;
     }
 
     #attackButton {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background-color: #4CAF50;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      text-align: center;
-      font-size: 16px;
-      cursor: pointer;
-      transition-duration: 0.4s;
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        font-size: 16px;
+        cursor: pointer;
+        transition-duration: 0.4s;
     }
 
     #attackButton:hover {
-      background-color: #45a049;
+        background-color: #45a049;
     }
 
     #upgradePoints {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      color: #FFF;
-      font-size: 18px;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        color: #FFF;
+        font-size: 18px;
     }
-
-    #upgradeList {
-      position: fixed;
-      top: 50px;
-      right: 20px;
-      list-style-type: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    #upgradeList li {
-      padding: 10px;
-      border-bottom: 1px solid #CCC;
-    }
-
-    #upgradeList li:last-child {
-      border-bottom: none;
-    }
-
-    .upgrade {
-      position: relative;
-      display: inline-block;
-      width: 30px;
-      height: 30px;
-      background-color: #4CAF50;
-      border-radius: 50%;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      margin: 10px;
-    }
-
-    .upgrade::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 20px;
-      height: 20px;
-      background-color: #fff;
-      border-radius: 50%;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    }
-  </style>
+    </style>
 </head>
 <body>
-  <img id="image" src="img.png" alt="Bouncing Image">
-  <button id="attackButton">Attack!</button>
-  <div id="upgradePoints">Upgrade Points: 0</div>
-  <ul id="upgradeList"></ul>
+    <img id="image" src="img.png" alt="Bouncing Image">
+    <button id="attackButton">Attack!</button>
+    <div id="upgradePoints">Upgrade Points: 0</div>
 
-  <script>
-    var image = document.getElementById('image');
-    var attackButton = document.getElementById('attackButton');
-    var upgradePoints = 0;
-    var imageWidth = 100;
-    var imageHeight = 100;
-    var screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-    var screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-    
-    var posX = Math.random() * (screenWidth - imageWidth);
-    var posY = Math.random() * (screenHeight - imageHeight);
-    var velX = Math.random() < 0.5 ? 5 : -5; // Random initial direction
-    var velY = Math.random() < 0.5 ? 3 : -3; // Random initial direction
-    var accY = 0.5;
-
-    var isAttacking = false;
-    var upgrades = [];
-
-    function updatePosition() {
-      posX += velX;
-      posY += velY;
-      velY += accY;
-      
-      if (posX <= 0 || posX >= screenWidth - imageWidth) {
-        velX *= -1;
-      }
-      
-      if (posY <= 0 || posY >= screenHeight - imageHeight) {
-        velY *= -1;
-      }
-      
-      image.style.left = posX + 'px';
-      image.style.top = posY + 'px';
-      
-      requestAnimationFrame(updatePosition);
-    }
-
-    function attackImage() {
-      if (!isAttacking && upgradePoints > 0) {
-        isAttacking = true;
-        upgradePoints--;
-  
-        image.style.backgroundColor = 'red';
-        setTimeout(function() {
-          image.style.backgroundColor = '';
-          isAttacking = false;
-        }, 500);
-          
-        // Add an upgrade point to the list
-        var upgrade = document.createElement('li');
-        upgrade.innerHTML = '<span class="upgrade">+1</span>';
-        upgradeList.appendChild(upgrade);
+    <script>
+        var image = document.getElementById('image');
+        var attackButton = document.getElementById('attackButton');
+        var upgradePoints = 0;
+        var imageWidth = 100;
+        var imageHeight = 100;
+        var screenWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        var screenHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
         
-        // Update the upgrade points display
-        document.getElementById('upgradePoints').innerHTML = 'Upgrade Points: ' + upgradePoints;
-      }
-    }
+        var posX = Math.random() * (screenWidth - imageWidth);
+        var posY = Math.random() * (screenHeight - imageHeight);
+        var velX = Math.random() < 0.5 ? 5 : -5; // Random initial direction
+        var velY = Math.random() < 0.5 ? 3 : -3; // Random initial direction
+        var accY = 0.5;
 
-    function spendUpgradePoint() {
-      // Remove an upgrade from the list
-      var upgrade = upgradeList.firstChild;
-      upgradeList.removeChild(upgrade);
-      
-      // Apply the upgrade effect
-      switch (upgrade.querySelector('.upgrade').textContent) {
-        case '+1':
-          image.width += 10;
-          image.height += 10;
-          break;
-        case '+2':
-          velX *= 2;
-          velY *= 2;
-          break;
-        case '+3':
-          accY *= 2;
-          break;
-      }
-      
-      // Update the upgrade points display
-      upgradePoints++;
-      document.getElementById('upgradePoints').innerHTML = 'Upgrade Points: ' + upgradePoints;
-    }
+        var isAttacking = false;
 
-    image.addEventListener('click', attackImage);
-    attackButton.addEventListener('click', attackImage);
+        image.style.left = posX + 'px';
+        image.style.top = posY + 'px';
 
-    // Create the upgrade list
-    var upgradeList = document.getElementById('upgradeList');
-    var upgradeTypes = ['+1', '+2', '+3'];
-    for (var i = 0; i < upgradeTypes.length; i++) {
-      var upgrade = document.createElement('li');
-      upgrade.innerHTML = '<span class="upgrade">' + upgradeTypes[i] + '</span>';
-      upgradeList.appendChild(upgrade);
-    }
+        function updatePosition() {
+            posX += velX;
+            posY += velY;
+            velY += accY;
 
-    // Initialize the first upgrade
-    spendUpgradePoint();
-  </script>
+            if (posX <= 0 || posX >= screenWidth - imageWidth) {
+                velX *= -1;
+            }
+
+            if (posY <= 0 || posY >= screenHeight - imageHeight) {
+                velY *= -1;
+            }
+            
+            image.style.left = posX + 'px';
+            image.style.top = posY + 'px';
+
+            requestAnimationFrame(updatePosition);
+        }
+
+        function attackImage() {
+            if (!isAttacking && upgradePoints > 0) {
+                isAttacking = true;
+                upgradePoints--;
+
+                image.style.backgroundColor = 'red';
+                setTimeout(function() {
+                    image.style.backgroundColor = '';
+                    isAttacking = false;
+                }, 500);
+                
+                displayUpgradePoints();
+            }
+        }
+
+        function displayUpgradePoints() {
+            document.getElementById('upgradePoints').innerHTML = 'Upgrade Points: ' + upgradePoints;
+        }
+
+        image.addEventListener('click', attackImage);
+        attackButton.addEventListener('click', attackImage);
+
+        displayUpgradePoints();
+        updatePosition();
+    </script>
 </body>
-</html>
+</html>``` so that when you press attack it gives you an upgrade point and you can use that to purchase upgrades
